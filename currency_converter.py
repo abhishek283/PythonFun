@@ -12,20 +12,38 @@ class CurrencyConverter():
     #method add new country's currency rate
     @classmethod
     def add_country(cls,country_name,rate,symbol):
-        cls.country_rates[country_name]={}
-        cls.country_rates[country_name]['rate']=rate
-        cls.country_rates[country_name]['symbol'] =symbol
-        return True
+        if cls.country_rates.get(country_name):
+            return False,'Country Rate already defined'
+        else:
+            cls.country_rates[country_name]={}
+            if not isinstance(rate,(int,float)):
+                return False,'Invalid Rate Amount'
+            cls.country_rates[country_name]['rate']=rate
+            cls.country_rates[country_name]['symbol'] =symbol
+            return True,'Country Rate Added Successfully'
 
     # method change country's currency rate
     @classmethod
     def change_rate(cls,country_name,rate):
-        cls.country_rates[country_name]['rate'] = rate
-        return True
+
+        if cls.country_rates.get(country_name):
+            if not isinstance(rate,(int,float)):
+                return False, 'Invalid Rate Amount'
+            cls.country_rates[country_name]['rate'] = rate
+            return True,'Country Rate Changed Successfully'
+        else:
+            return False,'Please add Country currency rate first'
 
     # method  returns country's calcualted currency amount
-    def converted_amount(self,country_name,amount):
-        return   True,'{}{}'.format(amount* self.country_rates[country_name]['rate'],self.country_rates[country_name]['symbol'])
+    @classmethod
+    def converted_amount(cls,country_name,amount):
+        if cls.country_rates.get(country_name):
+            if  isinstance(amount,(int, float)):
+                return   True,'{}{}'.format(amount* cls.country_rates[country_name]['rate'],cls.country_rates[country_name]['symbol'])
+            else:
+                return False, 'Invalid Amount'
+        else:
+            return False,'Please Country define currency rate first'
 
     # method  returns country's currency rate
     @classmethod
@@ -41,22 +59,30 @@ class CurrencyConverter():
 if  __name__=="__main__":
     try:
         cc= CurrencyConverter()
-        success= cc.add_country('India',60,'₹')
+        success,message= cc.add_country('India',60,'₹')
+
         if success:
-            print 'Added India rate'
+            print message
             success, india_rate_conversion = cc.converted_amount('India', 25)
             if success:
                 print  india_rate_conversion
-        success=cc.change_rate('India',63.37)
+        else:
+            print message
+            print message
+        success,message=cc.change_rate('India',63.37)
         if success:
             success,india_rate_conversion= cc.converted_amount('India', 25)
             if success:
                 print  india_rate_conversion
-        success = cc.add_country('Japan', 110.62,'¥')
+        else:
+            print message
+        success,message = cc.add_country('Japan', 110.62,'¥')
         if success:
             success, japan_rate_conversion = cc.converted_amount('India', 25)
             if success:
                 print  japan_rate_conversion
+        else:
+            print message
 
         success, india_rate=cc.get_currency_rate('India')
         if success:

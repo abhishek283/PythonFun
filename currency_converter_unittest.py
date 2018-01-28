@@ -18,6 +18,8 @@ class CurrencyConverterTest(unittest.TestCase):
         self.assertTrue(success)
         self.assertEquals(result, '1500₹','Currency conversion is incorrect')
         self.assertEquals(result, '1584.25₹','Currency conversion is incorrect')
+        success, result = CurrencyConverter().converted_amount('India', '25')
+        self.assertFalse(success)
 
     def test_changerate(self):
         self.assertTrue(CurrencyConverter().change_rate('India',63.37))
